@@ -72,6 +72,15 @@ class ViewController: UIViewController {
         }
     }
     
+    // DotButton clicked
+    @IBAction func DotButtonClicked(_ sender: UIButton) {
+        if let text = display.text{
+            if !text.contains("."){
+                display.text = text + "."
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         //changeUIColor
         let starkPinkColor = UIColor(red: 0.9569, green: 0.5294, blue: 0.5098, alpha: 1.0) /* #f48782 */

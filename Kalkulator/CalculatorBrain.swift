@@ -102,5 +102,6 @@ struct CalculatorBrain{
             return function(firstOperand, secondOperand)
         }
     }
+
 }
 
