@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F55A6EA62425678F0070464D /* ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A6EA52425678F0070464D /* ObjC.m */; };
 		F588B46E239C7B6D005969D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588B46D239C7B6D005969D8 /* AppDelegate.swift */; };
 		F588B470239C7B6D005969D8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588B46F239C7B6D005969D8 /* SceneDelegate.swift */; };
 		F588B472239C7B6D005969D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588B471239C7B6D005969D8 /* ViewController.swift */; };
@@ -17,6 +18,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F55A6EA3242567700070464D /* ObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
+		F55A6EA42425678F0070464D /* Kalkulator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kalkulator-Bridging-Header.h"; sourceTree = "<group>"; };
+		F55A6EA52425678F0070464D /* ObjC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjC.m; sourceTree = "<group>"; };
 		F588B46A239C7B6D005969D8 /* Piggy Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Piggy Calculator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F588B46D239C7B6D005969D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F588B46F239C7B6D005969D8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -42,8 +46,11 @@
 		F588B461239C7B6D005969D8 = {
 			isa = PBXGroup;
 			children = (
+				F55A6EA52425678F0070464D /* ObjC.m */,
+				F55A6EA3242567700070464D /* ObjC.h */,
 				F588B46C239C7B6D005969D8 /* Kalkulator */,
 				F588B46B239C7B6D005969D8 /* Products */,
+				F55A6EA42425678F0070464D /* Kalkulator-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,6 +117,7 @@
 				TargetAttributes = {
 					F588B469239C7B6D005969D8 = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -149,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F55A6EA62425678F0070464D /* ObjC.m in Sources */,
 				F588B472239C7B6D005969D8 /* ViewController.swift in Sources */,
 				F588B46E239C7B6D005969D8 /* AppDelegate.swift in Sources */,
 				F5E39B7A239EBBF00002DA59 /* CalculatorBrain.swift in Sources */,
@@ -235,6 +244,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 			};
 			name = Debug;
 		};
@@ -288,6 +298,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -296,6 +307,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YD34AU436T;
 				INFOPLIST_FILE = Kalkulator/Info.plist;
@@ -305,6 +317,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.kalkulator2;
 				PRODUCT_NAME = "Piggy Calculator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Kalkulator-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -314,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YD34AU436T;
 				INFOPLIST_FILE = Kalkulator/Info.plist;
@@ -323,6 +339,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.kalkulator2;
 				PRODUCT_NAME = "Piggy Calculator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Kalkulator-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
