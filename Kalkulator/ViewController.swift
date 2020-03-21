@@ -11,18 +11,16 @@ import AVFoundation
 
 
 class ViewController: UIViewController {
-    // Exemplar variables
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var expressionLabel: UILabel!
     var userIsInTheMiddleOfTyping = false
     
-    // Action nhấn nút số
+    // Buttons clicked
     @IBAction func buttonTouched(_ sender: UIButton) {
         if !userIsInTheMiddleOfTyping{
             expressionLabel.text = ""
             userIsInTheMiddleOfTyping = true
         }
-        
         switch sender.currentTitle! {
         case "√":
             expressionLabel.text! += "√("
@@ -32,6 +30,15 @@ class ViewController: UIViewController {
             if expressionLabel.text!.count > 0 {
                 expressionLabel.text = String(expressionLabel.text!.dropLast(1))
             }
+        case "+","-","⨉", "÷":
+            let operations = ["+","-","⨉", "÷"]
+            for operation in operations{
+                if (expressionLabel.text?.contains(operation))! {
+                                calculate()
+                }
+            }
+
+            expressionLabel.text! += sender.currentTitle!
         default:
             expressionLabel.text! += sender.currentTitle!
         }
@@ -48,6 +55,17 @@ class ViewController: UIViewController {
     
     // EqualButton clicked
     @IBAction func equalButtonClicked(_ sender: Any) {
+        calculate()
+        beep()
+    }
+    
+    // Keyboard sound
+    func beep(){
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
+    }
+    
+    
+    func calculate(){
         var expressionInString = expressionLabel.text
         
         //Replace unknown operations such as ÷ to /
@@ -71,19 +89,10 @@ class ViewController: UIViewController {
                     self.display.text = String(result!)}
                 
             }
-        }	catch {
+        }    catch {
             display.text = "Invalid input 🐷"
         }
-        beep()
-
     }
-    
-    func beep(){
-               //AudioServicesPlaySystemSound(1209)
-        AudioServicesPlayAlertSound(SystemSoundID(1104))
-    }
-    
-
 
     
     
