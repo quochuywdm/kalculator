@@ -30,18 +30,10 @@ class ViewController: UIViewController {
             if expressionLabel.text!.count > 0 {
                 expressionLabel.text = String(expressionLabel.text!.dropLast(1))
             }
-        case "+","-","⨉", "÷":
-            let operations = ["+","-","⨉", "÷"]
-            for operation in operations{
-                if (expressionLabel.text?.contains(operation))! {
-                                calculate()
-                }
-            }
-
-            expressionLabel.text! += sender.currentTitle!
         default:
             expressionLabel.text! += sender.currentTitle!
         }
+        calculate(printIfUnvalid: false)
         beep()
     }
     
@@ -55,7 +47,7 @@ class ViewController: UIViewController {
     
     // EqualButton clicked
     @IBAction func equalButtonClicked(_ sender: Any) {
-        calculate()
+        calculate(printIfUnvalid: true)
         beep()
     }
     
@@ -65,7 +57,7 @@ class ViewController: UIViewController {
     }
     
     
-    func calculate(){
+    func calculate(printIfUnvalid : Bool){
         var expressionInString = expressionLabel.text
         
         //Replace unknown operations such as ÷ to /
@@ -83,14 +75,18 @@ class ViewController: UIViewController {
                 expressionInString! += " ="
                 // Convert .0 decimal (1.0 to 1)
                 if result!.truncatingRemainder(dividingBy: 1.0) == 0.0{
-                    self.display.text = String(Int(result!))
+                    var text = String(result!)
+                    text = String(text.dropLast(2))
+                    self.display.text = text
                 }
                 else{
                     self.display.text = String(result!)}
                 
             }
         }    catch {
-            display.text = "Invalid input 🐷"
+            if printIfUnvalid {
+                display.text = "Invalid input 🐷"
+            }
         }
     }
 
