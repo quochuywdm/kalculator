@@ -77,10 +77,10 @@ class ViewController: UIViewController {
                 if result!.truncatingRemainder(dividingBy: 1.0) == 0.0{
                     var text = String(result!)
                     text = String(text.dropLast(2))
-                    self.display.text = text
                 }
-                else{
-                    self.display.text = String(result!)}
+                // 50000 to 50,000
+                let formattedNumber = self.formattedNumberInString(number: result!)
+                self.display.text = formattedNumber
                 
             }
         }    catch {
@@ -89,7 +89,16 @@ class ViewController: UIViewController {
             }
         }
     }
-
+    
+    // 50000 to 50,000
+    func formattedNumberInString(number : Double) -> String{
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 10
+        let formattedNumber = formatter.string(from: NSNumber(value: number))
+        
+        return String(formattedNumber!)
+    }
     
     
 }
@@ -103,10 +112,10 @@ extension NSExpression {
                 return NSExpression(forConstantValue: NSNumber(value: value.doubleValue))
             }
         case .function:
-           let newArgs = arguments.map { $0.map { $0.toFloatingPoint() } }
-           return NSExpression(forFunction: operand, selectorName: function, arguments: newArgs)
+            let newArgs = arguments.map { $0.map { $0.toFloatingPoint() } }
+            return NSExpression(forFunction: operand, selectorName: function, arguments: newArgs)
         case .conditional:
-           return NSExpression(forConditional: predicate, trueExpression: self.true.toFloatingPoint(), falseExpression: self.false.toFloatingPoint())
+            return NSExpression(forConditional: predicate, trueExpression: self.true.toFloatingPoint(), falseExpression: self.false.toFloatingPoint())
         case .unionSet:
             return NSExpression(forUnionSet: left.toFloatingPoint(), with: right.toFloatingPoint())
         case .intersectSet:
@@ -126,7 +135,7 @@ extension NSExpression {
         case .block:
             fatalError("block not yet implemented")
         case .evaluatedObject, .variable, .keyPath:
-            break // Nothing to do here
+        break // Nothing to do here
         @unknown default:
             break
         }
