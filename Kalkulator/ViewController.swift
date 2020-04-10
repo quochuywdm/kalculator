@@ -13,7 +13,12 @@ import AVFoundation
 class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var expressionLabel: UILabel!
+    @IBOutlet weak var decimalButton: RoundButton!
     var userIsInTheMiddleOfTyping = false
+    
+    override func viewWillAppear(_ animated: Bool){
+        decimalButton.setTitle(String(Locale.current.decimalSeparator!), for: [])
+    }
     
     // Buttons clicked
     @IBAction func buttonTouched(_ sender: UIButton) {
@@ -30,8 +35,45 @@ class ViewController: UIViewController {
             if expressionLabel.text!.count > 0 {
                 expressionLabel.text = String(expressionLabel.text!.dropLast(1))
             }
+        case "π":
+            if let lastChar: Character = expressionLabel.text?.last{
+                if (lastChar.isNumber || lastChar == ")" || lastChar == "²" || lastChar == "%") {
+                    expressionLabel.text! += "*π"
+                }
+                
+            }
+            else{
+                expressionLabel.text! += sender.currentTitle!
+            }
+        case ")":
+            let expressionInArray = Array(expressionLabel.text!)
+            var countOpenBrackets = 0
+            var countClosedBrackets = 0
+            
+            for character in expressionInArray{
+                if (character == "("){
+                    countOpenBrackets += 1
+                }
+                if(character == ")"){
+                    countClosedBrackets += 1
+                }
+                print(countOpenBrackets)
+                print(countClosedBrackets)
+            }
+            if (countOpenBrackets == countClosedBrackets){
+                expressionLabel.text = "(" + expressionLabel.text! + ")"
+            }
+            else{
+                expressionLabel.text! += sender.currentTitle!
+            }
+            
+        case ".", ",":
+            expressionLabel.text! += sender.currentTitle!
+            
         default:
             expressionLabel.text! += sender.currentTitle!
+            
+            expressionLabel.text = formattedSuffixNumberInString(expressionInString: expressionLabel.text!)
         }
         calculate(printIfUnvalid: false)
         beep()
@@ -41,7 +83,7 @@ class ViewController: UIViewController {
     @IBAction func clearButtonClicked(_ sender: Any) {
         display.text = "0"
         userIsInTheMiddleOfTyping = false
-        expressionLabel.text = "No input🐽"
+        expressionLabel.text = " "
         beep()
     }
     
@@ -56,16 +98,17 @@ class ViewController: UIViewController {
         AudioServicesPlayAlertSound(SystemSoundID(1104))
     }
     
-    
+    // Calculate the arithmetic expression
     func calculate(printIfUnvalid : Bool){
-        var expressionInString = expressionLabel.text
+        var expressionInString = convertDecimalSymbol(expressionInString: expressionLabel.text)
         
         //Replace unknown operations such as ÷ to /
-        let symbolReplacement:[String:String] = ["⨉":"*", "÷":"/", "π":String(Double.pi), "√":"sqrt", "%": "/100", "²":"**2", "±":"-"]
+        var symbolReplacement:[String:String] = ["⨉":"*", "÷":"/", "π":String(Double.pi), "√":"sqrt", "%": "/100", "²":"**2", "±":"-"]
         for (index, keyValue) in symbolReplacement {
             expressionInString = expressionInString!.replacingOccurrences(of: index, with: keyValue)
         }
-        // Calculate arithmetic expression
+        
+        // Calculate
         do{
             try ObjC.catchException {
                 let expression = NSExpression(format: expressionInString!)
@@ -85,9 +128,25 @@ class ViewController: UIViewController {
             }
         }    catch {
             if printIfUnvalid {
+                AudioServicesPlayAlertSound(SystemSoundID(1105))
                 display.text = "Invalid input 🐷"
             }
         }
+    }
+    
+    // Convert the whole Expression in proper form of decimal based on chosen language of device
+    func convertDecimalSymbol(expressionInString : String?) -> String?{
+        var resultExpression = expressionInString
+        let decimalSeparator = Locale.current.decimalSeparator!
+        if (decimalSeparator == ",") {
+            resultExpression = expressionInString!.replacingOccurrences(of: ",", with: "dot")
+            resultExpression = expressionInString!.replacingOccurrences(of: ".", with: "")
+            resultExpression = expressionInString!.replacingOccurrences(of: "dot", with: ".")
+        }
+        else {
+            resultExpression = expressionInString!.replacingOccurrences(of: ",", with: "")
+        }
+        return resultExpression
     }
     
     // 50000 to 50,000
@@ -98,6 +157,31 @@ class ViewController: UIViewController {
         let formattedNumber = formatter.string(from: NSNumber(value: number))
         
         return String(formattedNumber!)
+    }
+    
+    //Get suffix number from Expression and format the suffix number
+    func formattedSuffixNumberInString(expressionInString : String) -> String{
+        let groupingSeparatorSymbol = Locale.current.groupingSeparator!
+        var str = expressionInString
+        let strArray = Array(expressionInString)
+        var length = expressionInString.count - 1
+        let numberAndDot: [Character] = ["0","1","2","3","4","5","6","7","8","9",".",Character(groupingSeparatorSymbol)]
+        var suffixNumber = ""
+        
+        while ( length >=  0 && numberAndDot.contains(strArray[length]))
+        {
+            suffixNumber = String(strArray[length]) + suffixNumber
+            length -= 1
+            str = String(str.dropLast())
+        }
+        var suffixNumberInForm = ""
+        if (suffixNumber != "") {
+            suffixNumber = suffixNumber.replacingOccurrences(of: groupingSeparatorSymbol, with: "")
+            let suffixNumberInDouble = Double(suffixNumber)!
+            suffixNumberInForm = formattedNumberInString(number: suffixNumberInDouble)
+        }
+        
+        return str + suffixNumberInForm
     }
     
     
