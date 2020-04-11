@@ -38,13 +38,19 @@ class ViewController: UIViewController {
         case "π":
             if let lastChar: Character = expressionLabel.text?.last{
                 if (lastChar.isNumber || lastChar == ")" || lastChar == "²" || lastChar == "%") {
-                    expressionLabel.text! += "*π"
+                    expressionLabel.text! += "⨉"
                 }
-                
             }
-            else{
-                expressionLabel.text! += sender.currentTitle!
+            expressionLabel.text! += sender.currentTitle!
+            
+        case "(":
+            if let lastChar: Character = expressionLabel.text?.last{
+                if (lastChar.isNumber || lastChar == ")" || lastChar == "²" || lastChar == "%") {
+                    expressionLabel.text! += "⨉"
+                }
             }
+            expressionLabel.text! += sender.currentTitle!
+            
         case ")":
             let expressionInArray = Array(expressionLabel.text!)
             var countOpenBrackets = 0
@@ -139,9 +145,8 @@ class ViewController: UIViewController {
         var resultExpression = expressionInString
         let decimalSeparator = Locale.current.decimalSeparator!
         if (decimalSeparator == ",") {
-            resultExpression = expressionInString!.replacingOccurrences(of: ",", with: "dot")
-            resultExpression = expressionInString!.replacingOccurrences(of: ".", with: "")
-            resultExpression = expressionInString!.replacingOccurrences(of: "dot", with: ".")
+            resultExpression = resultExpression!.replacingOccurrences(of: ".", with: "")
+            resultExpression = resultExpression!.replacingOccurrences(of: ",", with: ".")
         }
         else {
             resultExpression = expressionInString!.replacingOccurrences(of: ",", with: "")
