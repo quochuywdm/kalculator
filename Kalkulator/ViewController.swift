@@ -15,9 +15,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var expressionLabel: UILabel!
     @IBOutlet weak var decimalButton: RoundButton!
     var userIsInTheMiddleOfTyping = false
+    @IBOutlet var hauptView: UIView!
+    
+
     
     override func viewWillAppear(_ animated: Bool){
         decimalButton.setTitle(String(Locale.current.decimalSeparator!), for: [])
+        
+        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
+        backgroundImage.image = UIImage(named: "background9.jpg")
+        backgroundImage.contentMode =  UIView.ContentMode.scaleAspectFill
+        hauptView.insertSubview(backgroundImage, at: 0)
     }
     
     // Buttons clicked
