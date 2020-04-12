@@ -17,13 +17,13 @@ class ViewController: UIViewController {
     var userIsInTheMiddleOfTyping = false
     @IBOutlet var hauptView: UIView!
     
-
+    
     
     override func viewWillAppear(_ animated: Bool){
         decimalButton.setTitle(String(Locale.current.decimalSeparator!), for: [])
         
         let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
-        backgroundImage.image = UIImage(named: "background9.jpg")
+        backgroundImage.image = UIImage(named: "background.png")
         backgroundImage.contentMode =  UIView.ContentMode.scaleAspectFill
         hauptView.insertSubview(backgroundImage, at: 0)
     }
@@ -71,8 +71,6 @@ class ViewController: UIViewController {
                 if(character == ")"){
                     countClosedBrackets += 1
                 }
-                print(countOpenBrackets)
-                print(countClosedBrackets)
             }
             if (countOpenBrackets == countClosedBrackets){
                 expressionLabel.text = "(" + expressionLabel.text! + ")"
@@ -86,20 +84,12 @@ class ViewController: UIViewController {
             
         default:
             expressionLabel.text! += sender.currentTitle!
-            
-            expressionLabel.text = formattedSuffixNumberInString(expressionInString: expressionLabel.text!)
+            expressionLabel.text! = getformatedExpressionLabel(expressionLabel: expressionLabel.text!)
         }
         calculate(printIfUnvalid: false)
         beep()
     }
     
-    // ClearButton clicked
-    @IBAction func clearButtonClicked(_ sender: Any) {
-        display.text = "0"
-        userIsInTheMiddleOfTyping = false
-        expressionLabel.text = " "
-        beep()
-    }
     
     // EqualButton clicked
     @IBAction func equalButtonClicked(_ sender: Any) {
@@ -110,6 +100,14 @@ class ViewController: UIViewController {
     // Keyboard sound
     func beep(){
         AudioServicesPlayAlertSound(SystemSoundID(1104))
+    }
+    
+    // ClearButton clicked
+    @IBAction func clearButtonClicked(_ sender: Any) {
+        display.text = "0"
+        userIsInTheMiddleOfTyping = false
+        expressionLabel.text = " "
+        beep()
     }
     
     // Calculate the arithmetic expression
@@ -136,7 +134,7 @@ class ViewController: UIViewController {
                     text = String(text.dropLast(2))
                 }
                 // 50000 to 50,000
-                let formattedNumber = self.formattedNumberInString(number: result!)
+                let formattedNumber = self.formattedResultInString(number: result!)
                 self.display.text = formattedNumber
                 
             }
@@ -163,7 +161,7 @@ class ViewController: UIViewController {
     }
     
     // 50000 to 50,000
-    func formattedNumberInString(number : Double) -> String{
+    func formattedResultInString(number : Double) -> String{
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 10
@@ -172,30 +170,75 @@ class ViewController: UIViewController {
         return String(formattedNumber!)
     }
     
-    //Get suffix number from Expression and format the suffix number
-    func formattedSuffixNumberInString(expressionInString : String) -> String{
-        let groupingSeparatorSymbol = Locale.current.groupingSeparator!
-        var str = expressionInString
-        let strArray = Array(expressionInString)
-        var length = expressionInString.count - 1
-        let numberAndDot: [Character] = ["0","1","2","3","4","5","6","7","8","9",".",Character(groupingSeparatorSymbol)]
-        var suffixNumber = ""
+    // format expression Label in proper from: 2+1234 to 2+1,234
+    func getformatedExpressionLabel(expressionLabel: String) -> String{
+        let lastOperand = getLastOperand(expressionInString: expressionLabel)
+        let formattedLastOperand = getformattedLastOperand(Operand: lastOperand)
+        var resultLabel = expressionLabel
         
-        while ( length >=  0 && numberAndDot.contains(strArray[length]))
-        {
-            suffixNumber = String(strArray[length]) + suffixNumber
-            length -= 1
-            str = String(str.dropLast())
+        // delete last Operand from original expressionLabel
+        let groupingSeparatorSymbol = Character(Locale.current.groupingSeparator!)
+        let decimalSeparatorSymbol = Character(Locale.current.decimalSeparator!)
+        while (resultLabel.last?.isNumber ?? false || resultLabel.last == groupingSeparatorSymbol || resultLabel.last == decimalSeparatorSymbol) {
+            resultLabel = String(resultLabel.dropLast(1))
         }
-        var suffixNumberInForm = ""
-        if (suffixNumber != "") {
-            suffixNumber = suffixNumber.replacingOccurrences(of: groupingSeparatorSymbol, with: "")
-            let suffixNumberInDouble = Double(suffixNumber)!
-            suffixNumberInForm = formattedNumberInString(number: suffixNumberInDouble)
-        }
-        
-        return str + suffixNumberInForm
+        resultLabel = resultLabel + formattedLastOperand
+        return resultLabel
     }
+    
+    
+    // Get last Operand without Groupping Separator
+    func getLastOperand(expressionInString : String) -> String{
+        var expressionInString2 = expressionInString
+        var operand = ""
+        let groupingSeparatorSymbol = Character(Locale.current.groupingSeparator!)
+        let decimalSeparatorSymbol = Character(Locale.current.decimalSeparator!)
+        while (expressionInString2.last?.isNumber ?? false || expressionInString2.last == groupingSeparatorSymbol || expressionInString2.last == decimalSeparatorSymbol) {
+            if (expressionInString2.last! != groupingSeparatorSymbol){
+                operand = String(expressionInString2.last!) + operand
+            }
+            expressionInString2.remove(at: expressionInString2.index(before: expressionInString2.endIndex))
+        }
+        return operand
+    }
+    
+    //Get formatted Operand from Expression and format the suffix number
+    func getformattedLastOperand(Operand : String) -> String{
+        let groupingSeparatorSymbol = Character(Locale.current.groupingSeparator!)
+        let decimalSeparatorSymbol = Character(Locale.current.decimalSeparator!)
+        var roundPart = ""
+        var decimalPart = ""
+        var resultString = ""
+        
+        var indexFromDecimalCharacter = Operand.lastIndex(of: decimalSeparatorSymbol)
+        if(Operand.contains(decimalSeparatorSymbol)){
+            roundPart = String(Operand.prefix(upTo: indexFromDecimalCharacter!))
+        }
+        else{
+            roundPart = Operand
+        }
+        
+        
+        // add grouping Symbol to roundNumer
+        while(roundPart.count > 3){
+            resultString = String(groupingSeparatorSymbol) + String(roundPart.suffix(3) + resultString)
+            roundPart = String(roundPart.dropLast(3))
+        }
+        if (roundPart.count <= 3){
+            resultString = roundPart + resultString
+        }
+        
+        // add decimalPart
+        //return resultString
+        
+        if(Operand.contains(decimalSeparatorSymbol)){
+            decimalPart = String(Operand.suffix(from: indexFromDecimalCharacter!))
+            resultString = resultString + decimalPart
+        }
+        
+        return resultString
+    }
+    
     
     
 }
